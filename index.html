@@ -5,44 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Neon Tetris</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Favicon for polish -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='2' y='2' width='28' height='28' rx='6' fill='%230ff'/><text x='16' y='22' font-size='14' text-anchor='middle' fill='%23000'>T</text></svg>">
 </head>
 
 <body>
-
   <h1 class="neon-title">NEON TETRIS</h1>
 
-  <button id="settings-btn" class="settings-btn">⚙️ Settings</button>
+  <button id="settings-btn" class="settings-btn" aria-label="Settings">⚙️ Settings</button>
 
   <!-- SETTINGS PANEL -->
-  <div id="settings-panel" class="settings-panel hidden">
+  <div id="settings-panel" class="settings-panel hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <h2 id="settings-title">Settings</h2>
 
-    <h2>Settings</h2>
-
-    <label>
+    <label for="perf-toggle">
       <span>Performance Mode</span>
       <input type="checkbox" id="perf-toggle">
     </label>
 
-    <label>
+    <label for="glow-toggle">
       <span>Block Neon Glow</span>
       <input type="checkbox" id="glow-toggle" checked>
     </label>
 
-    <label>
+    <label for="speed-slider">
       <span>Fall Speed</span>
-      <input type="range" id="speed-slider" min="200" max="1200" value="1000">
+      <input type="range" id="speed-slider" min="200" max="1200" value="1000" step="100">
     </label>
 
-    <button id="close-settings">Close</button>
+    <button id="close-settings" class="close-settings" aria-label="Close Settings">Close</button>
   </div>
 
-  <canvas id="tetris" width="240" height="400"></canvas>
+  <!-- Main Tetris Game Canvas -->
+  <div class="canvas-container">
+    <canvas id="tetris" width="240" height="400" tabindex="0" aria-label="Tetris Game Canvas"></canvas>
+    <!-- (Optional) Score display, uncomment to use in future
+    <div id="score-display" class="score-neon"></div>
+    -->
+  </div>
 
-  <div id="touch-controls">
-    <button id="left-btn">◀</button>
-    <button id="rotate-btn">⟳</button>
-    <button id="right-btn">▶</button>
-    <button id="down-btn">▼</button>
+  <!-- Touch Controls for mobile/tablet -->
+  <div id="touch-controls" class="touch-controls">
+    <button id="left-btn" aria-label="Move Left">◀</button>
+    <button id="rotate-btn" aria-label="Rotate">⟳</button>
+    <button id="right-btn" aria-label="Move Right">▶</button>
+    <button id="down-btn" aria-label="Soft Drop">▼</button>
   </div>
 
   <script src="script.js"></script>
