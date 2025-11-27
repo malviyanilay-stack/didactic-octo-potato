@@ -20,9 +20,10 @@ function collide(arena, player) {
   const [m, o] = [player.matrix, player.pos];
   for (let y = 0; y < m.length; ++y) {
     for (let x = 0; x < m[y].length; ++x) {
-      if (m[y][x] !== 0 &&
-          (arena[y + o.y] &&
-           arena[y + o.y][x + o.x]) !== 0) {
+      if (
+        m[y][x] !== 0 &&
+        (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0
+      ) {
         return true;
       }
     }
@@ -32,9 +33,7 @@ function collide(arena, player) {
 
 function createMatrix(w, h) {
   const matrix = [];
-  while (h--) {
-    matrix.push(new Array(w).fill(0));
-  }
+  while (h--) matrix.push(new Array(w).fill(0));
   return matrix;
 }
 
@@ -98,7 +97,6 @@ function drawMatrix(matrix, offset) {
 function draw() {
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   drawMatrix(arena, { x: 0, y: 0 });
   drawMatrix(player.matrix, player.pos);
 }
@@ -114,7 +112,6 @@ function merge(arena, player) {
 }
 
 function rotate(matrix) {
-  // Transpose + reverse = rotate
   for (let y = 0; y < matrix.length; ++y) {
     for (let x = 0; x < y; ++x) {
       [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
@@ -125,10 +122,13 @@ function rotate(matrix) {
 
 function playerReset() {
   const pieces = "ILJOTSZ";
-  player.matrix = createPiece(pieces[(pieces.length * Math.random()) | 0]);
+  player.matrix = createPiece(
+    pieces[(pieces.length * Math.random()) | 0]
+  );
   player.pos.y = 0;
   player.pos.x =
-    ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
+    ((arena[0].length / 2) | 0) -
+    ((player.matrix[0].length / 2) | 0);
 
   if (collide(arena, player)) {
     arena.forEach(row => row.fill(0));
@@ -170,16 +170,26 @@ function update(time = 0) {
   requestAnimationFrame(update);
 }
 
+// KEYBOARD CONTROLS
 document.addEventListener("keydown", event => {
-  if (event.key === "ArrowLeft") {
-    playerMove(-1);
-  } else if (event.key === "ArrowRight") {
-    playerMove(1);
-  } else if (event.key === "ArrowDown") {
-    playerDrop();
-  } else if (event.key === "ArrowUp") {
-    rotate(player.matrix);
-  }
+  if (event.key === "ArrowLeft") playerMove(-1);
+  else if (event.key === "ArrowRight") playerMove(1);
+  else if (event.key === "ArrowDown") playerDrop();
+  else if (event.key === "ArrowUp") rotate(player.matrix);
+});
+
+// TOUCH CONTROLS (iPad / Mobile)
+document.getElementById("left-btn").addEventListener("touchstart", () => {
+  playerMove(-1);
+});
+document.getElementById("right-btn").addEventListener("touchstart", () => {
+  playerMove(1);
+});
+document.getElementById("down-btn").addEventListener("touchstart", () => {
+  playerDrop();
+});
+document.getElementById("rotate-btn").addEventListener("touchstart", () => {
+  rotate(player.matrix);
 });
 
 const arena = createMatrix(12, 20);
