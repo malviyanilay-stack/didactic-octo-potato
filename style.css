@@ -1,6 +1,6 @@
-/* --------------------
+/* -------------------------
    GLOBAL + NEON LOOK
------------------------*/
+---------------------------*/
 body {
   background: #050505;
   color: #fff;
@@ -8,120 +8,227 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
+  position: relative;
 }
 
 .neon-title {
-  margin-top: 20px;
-  font-size: 2.4rem;
+  margin-top: 28px;
+  margin-bottom: 0;
+  font-size: 2.6rem;
   color: #0ff;
-  text-shadow: 0 0 10px #0ff, 0 0 20px #09f;
+  text-shadow:
+    0 0 10px #0ff,
+    0 0 20px #09f,
+    0 0 40px #0ff;
+  letter-spacing: 1.5px;
+  font-weight: bold;
 }
 
-canvas {
-  margin-top: 18px;
-  border: 3px solid #00f2ff;
-  border-radius: 8px;
-  box-shadow: 0 0 15px #00f2ff;
-  background: #000;
-}
-
-/* --------------------
-   TOUCH CONTROLS
------------------------*/
-#touch-controls {
-  margin-top: 20px;
+.canvas-container {
+  /* Easy future score/next preview positioning */
   display: flex;
-  gap: 14px;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+canvas#tetris {
+  margin-top: 20px;
+  border: 3px solid #00f2ff;
+  border-radius: 10px;
+  box-shadow: 0 0 20px #00f2ff, 0 0 60px #0ff inset;
+  background: #000;
+  display: block;
+  width: 240px;
+  height: 400px;
+  outline: none;
+}
+
+/* -------------------------
+   TOUCH CONTROLS
+---------------------------*/
+#touch-controls {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+  z-index: 15;
 }
 
 #touch-controls button {
   background: #111;
   color: #0ff;
   border: 2px solid #0ff;
-  border-radius: 10px;
-  padding: 14px 20px;
-  font-size: 26px;
-  box-shadow: 0 0 10px #0ff;
-  transition: 0.2s;
+  border-radius: 12px;
+  padding: 16px 26px;
+  font-size: 30px;
+  box-shadow: 0 0 16px #0ff, 0 0 2px #222 inset;
+  transition: transform 0.18s, background 0.18s, box-shadow 0.2s;
+  outline: none;
 }
-
 #touch-controls button:active,
 #touch-controls button.pressed {
-  transform: scale(0.92);
+  transform: scale(0.93);
   background: #033;
+  box-shadow: 0 0 20px #0ff;
 }
 
-/* --------------------
+/* -------------------------
    SETTINGS BUTTON
------------------------*/
+---------------------------*/
 .settings-btn {
   position: absolute;
   top: 12px;
-  right: 12px;
+  right: 16px;
   background: #222;
   border: 2px solid #0ff;
   color: #0ff;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 20px;
+  padding: 11px 16px;
+  border-radius: 10px;
+  font-size: 22px;
   cursor: pointer;
-  box-shadow: 0 0 10px #0ff;
-  transition: 0.2s;
+  box-shadow: 0 0 16px #0ff, 0 0 2px #022;
+  transition: background 0.22s, box-shadow 0.21s;
+  z-index: 30;
 }
 
-.settings-btn:hover {
+.settings-btn:hover,
+.settings-btn:focus {
   background: #033;
+  box-shadow: 0 0 22px #0ff;
 }
 
-/* --------------------
+/* -------------------------
    SETTINGS PANEL
------------------------*/
+---------------------------*/
 .settings-panel {
   position: absolute;
-  top: 80px;
-  background: rgba(5, 5, 5, 0.95);
+  top: 88px;
+  right: 18px;
+  background: rgba(5, 5, 5, 0.98);
   border: 2px solid #0ff;
-  border-radius: 10px;
-  padding: 20px;
-  width: 260px;
-  box-shadow: 0 0 20px #0ff;
+  border-radius: 12px;
+  padding: 22px 20px 16px;
+  width: 270px;
+  max-width: 94vw;
+  box-shadow: 0 0 28px #0ff, 0 0 8px #00f2ff inset;
   text-align: left;
-  z-index: 20;
+  z-index: 100;
+  animation: fadeIn 0.27s linear;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-14px);}
+  to   { opacity: 1; transform: translateY(0);}
 }
 
 .settings-panel.hidden {
-  display: none;
+  display: none !important;
 }
 
 .settings-panel h2 {
   text-align: center;
-  margin-top: 0;
+  margin: 0 0 15px 0;
   color: #0ff;
+  font-size: 1.18em;
+  font-weight: bold;
+  text-shadow: 0 0 13px #0ff;
 }
 
 .settings-panel label {
   display: flex;
   justify-content: space-between;
-  margin: 12px 0;
+  align-items: center;
+  margin: 14px 0;
   font-size: 18px;
+  gap: 8px;
 }
 
-#close-settings {
+.settings-panel input[type="checkbox"],
+.settings-panel input[type="range"] {
+  accent-color: #0ff;
+  margin-left: 14px;
+}
+
+#speed-slider {
+  width: 110px;
+}
+
+#close-settings, .close-settings {
   width: 100%;
-  margin-top: 14px;
-  padding: 10px;
+  margin-top: 18px;
+  padding: 12px 0;
   background: #222;
   color: #0ff;
   border: 2px solid #0ff;
-  border-radius: 8px;
-  box-shadow: 0 0 10px #0ff;
+  border-radius: 10px;
+  box-shadow: 0 0 12px #0ff;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background 0.21s, box-shadow 0.2s;
 }
 
-/* MOBILE */
-@media (max-width: 600px) {
-  canvas {
-    width: 90vw;
+#close-settings:hover,
+#close-settings:focus {
+  background: #033;
+  box-shadow: 0 0 20px #09f;
+}
+
+/* Optional score display for future */
+.score-neon {
+  color: #0ff;
+  font-size: 1.1em;
+  margin: 5px auto;
+  text-align: center;
+  text-shadow: 0 0 10px #0ff, 0 0 5px #09f;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* -------------------------
+   MOBILE FRIENDLY
+---------------------------*/
+@media (max-width: 700px) {
+  canvas#tetris {
+    width: 96vw;
+    height: 52vw;
+    min-width: 200px;
+    min-height: 350px;
+    max-width: 98vw;
+    max-height: 75vh;
+  }
+  .settings-panel {
+    top: 66px;
+    right: 4px;
+    width: 95vw;
+    padding: 16px 4vw 12px;
+  }
+  .settings-btn {
+    top: 10px;
+    right: 8px;
+    font-size: 20px;
+    padding: 7px 12px;
+  }
+  #touch-controls {
+    margin-top: 14px;
+    gap: 8vw;
+  }
+}
+
+@media (max-width: 430px) {
+  .neon-title {
+    font-size: 1.3rem;
+    margin-top: 11px;
+  }
+  #touch-controls button {
+    font-size: 22px;
+    padding: 12px 14px;
+  }
+  .settings-panel {
+    font-size: 15px;
+    padding: 12px 2vw 9px;
   }
 }
