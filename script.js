@@ -1,14 +1,52 @@
 const canvas = document.getElementById("tetris");
 const ctx = canvas.getContext("2d");
-
 ctx.scale(20, 20);
+
+let neonGlow = true;
+let performanceMode = false;
+
+// Smooth falling
+let dropInterval = 1000;
+
+/* -------------------------
+   SETTINGS PANEL LOGIC
+---------------------------- */
+const settingsBtn = document.getElementById("settings-btn");
+const settingsPanel = document.getElementById("settings-panel");
+const perfToggle = document.getElementById("perf-toggle");
+const glowToggle = document.getElementById("glow-toggle");
+const speedSlider = document.getElementById("speed-slider");
+const closeSettings = document.getElementById("close-settings");
+
+settingsBtn.addEventListener("click", () => {
+  settingsPanel.classList.remove("hidden");
+});
+
+closeSettings.addEventListener("click", () => {
+  settingsPanel.classList.add("hidden");
+});
+
+perfToggle.addEventListener("change", () => {
+  performanceMode = perfToggle.checked;
+  dropInterval = performanceMode ? 1600 : speedSlider.value;
+});
+
+glowToggle.addEventListener("change", () => {
+  neonGlow = glowToggle.checked;
+});
+
+speedSlider.addEventListener("input", () => {
+  if (!performanceMode) dropInterval = speedSlider.value;
+});
+
+/* -------------------------
+   GAME LOGIC
+---------------------------- */
 
 function arenaSweep() {
   outer: for (let y = arena.length - 1; y > 0; --y) {
     for (let x = 0; x < arena[y].length; ++x) {
-      if (arena[y][x] === 0) {
-        continue outer;
-      }
+      if (arena[y][x] === 0) continue outer;
     }
     const row = arena.splice(y, 1)[0].fill(0);
     arena.unshift(row);
@@ -23,9 +61,7 @@ function collide(arena, player) {
       if (
         m[y][x] !== 0 &&
         (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0
-      ) {
-        return true;
-      }
+      ) return true;
     }
   }
   return false;
@@ -53,16 +89,26 @@ function drawMatrix(matrix, offset) {
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
-        ctx.fillStyle = "#00FFFF"; 
+        ctx.fillStyle = "#0ff";
+
         ctx.fillRect(x + offset.x, y + offset.y, 1, 1);
+
+        if (neonGlow) {
+          ctx.shadowBlur = 18;
+          ctx.shadowColor = "#0ff";
+        } else {
+          ctx.shadowBlur = 0;
+        }
       }
     });
   });
 }
 
 function draw() {
+  ctx.shadowBlur = 0;
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
   drawMatrix(arena, { x: 0, y: 0 });
   drawMatrix(player.matrix, player.pos);
 }
@@ -70,9 +116,8 @@ function draw() {
 function merge(arena, player) {
   player.matrix.forEach((row, y) => {
     row.forEach((value, x) => {
-      if (value !== 0) {
+      if (value !== 0)
         arena[y + player.pos.y][x + player.pos.x] = value;
-      }
     });
   });
 }
@@ -88,16 +133,12 @@ function rotate(matrix) {
 
 function playerReset() {
   const pieces = "ILJOTSZ";
-  player.matrix = createPiece(
-    pieces[(pieces.length * Math.random()) | 0]
-  );
+  player.matrix = createPiece(pieces[(pieces.length * Math.random()) | 0]);
   player.pos.y = 0;
   player.pos.x = ((arena[0].length / 2) | 0) -
                  ((player.matrix[0].length / 2) | 0);
 
-  if (collide(arena, player)) {
-    arena.forEach(row => row.fill(0));
-  }
+  if (collide(arena, player)) arena.forEach(row => row.fill(0));
 }
 
 function playerDrop() {
@@ -113,15 +154,12 @@ function playerDrop() {
 
 function playerMove(dir) {
   player.pos.x += dir;
-  if (collide(arena, player)) {
-    player.pos.x -= dir;
-  }
+  if (collide(arena, player)) player.pos.x -= dir;
 }
 
 let dropCounter = 0;
-let dropInterval = 1000;
-
 let lastTime = 0;
+
 function update(time = 0) {
   const delta = time - lastTime;
   lastTime = time;
@@ -135,37 +173,24 @@ function update(time = 0) {
   requestAnimationFrame(update);
 }
 
-/* -----------------------------
-   KEYBOARD CONTROLS
---------------------------------*/
-document.addEventListener("keydown", event => {
-  if (event.key === "ArrowLeft") playerMove(-1);
-  else if (event.key === "ArrowRight") playerMove(1);
-  else if (event.key === "ArrowDown") playerDrop();
-  else if (event.key === "ArrowUp") rotate(player.matrix);
+/* -------------------------
+   KEYBOARD + TOUCH
+---------------------------- */
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft") playerMove(-1);
+  if (e.key === "ArrowRight") playerMove(1);
+  if (e.key === "ArrowDown") playerDrop();
+  if (e.key === "ArrowUp") rotate(player.matrix);
 });
-
-/* -----------------------------
-   TOUCH / MOBILE CONTROLS
-   (Now uses pointer events)
---------------------------------*/
 
 function bindControl(id, action) {
   const btn = document.getElementById(id);
-
-  btn.addEventListener("pointerdown", e => {
-    e.preventDefault();
+  btn.addEventListener("pointerdown", () => {
     btn.classList.add("pressed");
     action();
   });
-
-  btn.addEventListener("pointerup", () => {
-    btn.classList.remove("pressed");
-  });
-
-  btn.addEventListener("pointerleave", () => {
-    btn.classList.remove("pressed");
-  });
+  btn.addEventListener("pointerup", () => btn.classList.remove("pressed"));
+  btn.addEventListener("pointerleave", () => btn.classList.remove("pressed"));
 }
 
 bindControl("left-btn", () => playerMove(-1));
@@ -173,14 +198,11 @@ bindControl("right-btn", () => playerMove(1));
 bindControl("down-btn", () => playerDrop());
 bindControl("rotate-btn", () => rotate(player.matrix));
 
-/* -------------------------------- */
-
+/* -------------------------
+   START GAME
+---------------------------- */
 const arena = createMatrix(12, 20);
-
-const player = {
-  pos: { x: 0, y: 0 },
-  matrix: null,
-};
+const player = { pos: { x: 0, y: 0 }, matrix: null };
 
 playerReset();
 update();
