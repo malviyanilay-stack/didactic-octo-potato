@@ -1,10 +1,18 @@
 /* -------------------------
    GLOBAL + NEON LOOK
 ---------------------------*/
+:root{
+  --neon: #0ff;
+  --neon-2: #09f;
+  --bg: #050505;
+  --panel: rgba(5,5,5,0.98);
+}
+
+*{box-sizing:border-box}
 body {
-  background: #050505;
+  background: var(--bg);
   color: #fff;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Inter, Arial, Helvetica, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,16 +23,16 @@ body {
 }
 
 .neon-title {
-  margin-top: 28px;
-  margin-bottom: 2px;
+  margin-top: 20px;
+  margin-bottom: 6px;
   font-size: 2.4rem;
-  color: #0ff;
+  color: var(--neon);
   text-shadow:
-    0 0 10px #0ff,
-    0 0 20px #09f,
-    0 0 40px #0ff;
-  letter-spacing: 1.2px;
-  font-weight: bold;
+    0 0 8px var(--neon),
+    0 0 18px var(--neon-2),
+    0 0 36px var(--neon);
+  letter-spacing: 1px;
+  font-weight: 700;
 }
 
 .canvas-container {
@@ -35,42 +43,34 @@ body {
   width: fit-content;
 }
 
-/* HUD: score and next preview */
+/* HUD: score / next / hold */
 .hud {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   align-items: center;
   margin-top: 10px;
   width: 100%;
   justify-content: center;
+  margin-bottom: 8px;
 }
 
-#score-board, #next-piece {
+#score-board, #next-piece, #hold-piece {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #0ff;
+  color: var(--neon);
 }
 
-.score-label {
-  font-size: 0.9rem;
-  color: #0ff;
-  text-shadow: 0 0 12px #0ff;
-}
-
-.score-value {
-  font-size: 1.2rem;
-  margin-top: 4px;
-  font-family: 'Courier New', Courier, monospace;
-  text-shadow: 0 0 10px #0ff;
-}
+.score-label { font-size: 0.9rem; color: var(--neon); text-shadow: 0 0 10px var(--neon); }
+.score-value { font-size: 1.2rem; margin-top: 4px; font-family: 'Courier New', monospace; text-shadow: 0 0 8px var(--neon); }
+.score-sub { font-size: 0.8rem; color: rgba(255,255,255,0.65); margin-top:4px }
 
 /* main canvas */
 canvas#tetris {
-  margin-top: 10px;
+  margin-top: 6px;
   border: 3px solid #00f2ff;
   border-radius: 10px;
-  box-shadow: 0 0 20px #00f2ff, 0 0 60px #0ff inset;
+  box-shadow: 0 0 20px #00f2ff, 0 0 60px var(--neon) inset;
   background: #000;
   display: block;
   width: 240px;
@@ -78,169 +78,86 @@ canvas#tetris {
   outline: none;
 }
 
-/* next preview */
-canvas#next {
+/* preview canvases */
+canvas#next, canvas#hold {
   width: 80px;
   height: 80px;
   border: 2px solid rgba(0,255,255,0.12);
   border-radius: 6px;
   background: #000;
-  box-shadow: 0 0 10px rgba(0,255,255,0.06);
+  box-shadow: 0 0 8px rgba(0,255,255,0.06);
 }
 
-/* -------------------------
-   TOUCH CONTROLS
----------------------------*/
+/* controls footer */
+.controls-footer { display:flex; gap:12px; align-items:center; margin-top:8px; justify-content:center; width:100%}
+.small-btn { background:#111; border:1px solid rgba(0,255,255,0.12); color:var(--neon); padding:6px 10px; border-radius:8px; cursor:pointer; box-shadow:0 0 8px var(--neon)}
+
+/* touch controls */
 .touch-controls {
-  margin-top: 18px;
+  margin-top: 14px;
   display: flex;
   justify-content: center;
-  gap: 18px;
+  gap: 8px;
   width: 100%;
   z-index: 15;
+  flex-wrap: wrap;
+  padding: 10px 6px;
 }
 
 .touch-controls button {
   background: #111;
-  color: #0ff;
-  border: 2px solid #0ff;
-  border-radius: 12px;
-  padding: 14px 22px;
-  font-size: 26px;
-  box-shadow: 0 0 14px #0ff, 0 0 2px #222 inset;
-  transition: transform 0.18s, background 0.18s, box-shadow 0.2s;
+  color: var(--neon);
+  border: 2px solid var(--neon);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 18px;
+  box-shadow: 0 0 12px var(--neon), 0 0 2px #222 inset;
+  transition: transform 0.14s, background 0.14s, box-shadow 0.15s;
   outline: none;
 }
+.touch-controls button:active, .touch-controls button.pressed { transform: scale(0.94); background: #033; box-shadow: 0 0 20px var(--neon) }
 
-.touch-controls button:active,
-.touch-controls button.pressed {
-  transform: scale(0.93);
-  background: #033;
-  box-shadow: 0 0 20px #0ff;
-}
-
-/* -------------------------
-   SETTINGS BUTTON
----------------------------*/
+/* settings button */
 .settings-btn {
   position: absolute;
   top: 12px;
   right: 16px;
   background: #222;
-  border: 2px solid #0ff;
-  color: #0ff;
-  padding: 10px 14px;
+  border: 2px solid var(--neon);
+  color: var(--neon);
+  padding: 10px 12px;
   border-radius: 10px;
   font-size: 18px;
   cursor: pointer;
-  box-shadow: 0 0 16px #0ff, 0 0 2px #022;
-  transition: background 0.22s, box-shadow 0.21s;
-  z-index: 30;
+  box-shadow: 0 0 16px var(--neon);
+  z-index: 40;
 }
 
-.settings-btn:hover,
-.settings-btn:focus {
-  background: #033;
-  box-shadow: 0 0 22px #0ff;
-}
-
-/* -------------------------
-   SETTINGS PANEL
----------------------------*/
+/* settings panel */
 .settings-panel {
   position: absolute;
-  top: 80px;
-  right: 18px;
-  background: rgba(5, 5, 5, 0.98);
-  border: 2px solid #0ff;
+  top: 76px;
+  right: 12px;
+  background: var(--panel);
+  border: 2px solid var(--neon);
   border-radius: 12px;
-  padding: 18px 16px;
-  width: 280px;
+  padding: 16px;
+  width: 300px;
   max-width: 94vw;
-  box-shadow: 0 0 28px #0ff, 0 0 8px #00f2ff inset;
-  text-align: left;
+  box-shadow: 0 0 28px var(--neon);
   z-index: 100;
-  animation: fadeIn 0.22s linear;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px);}
-  to   { opacity: 1; transform: translateY(0);}
-}
+.settings-panel.hidden { display:none }
+.settings-panel h2 { color:var(--neon); margin: 0 0 10px 0; text-align:center; text-shadow:0 0 10px var(--neon) }
 
-.settings-panel.hidden {
-  display: none !important;
-}
+.settings-panel label { display:flex; justify-content:space-between; align-items:center; gap:8px; margin:8px 0; }
+.settings-panel input[type="range"] { width: 140px }
+.small-note { font-size:12px;color:rgba(255,255,255,0.6); margin-top:6px}
 
-.settings-panel h2 {
-  text-align: center;
-  margin: 0 0 12px 0;
-  color: #0ff;
-  font-size: 1.08em;
-  font-weight: bold;
-  text-shadow: 0 0 13px #0ff;
-}
-
-.settings-panel label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 12px 0;
-  font-size: 16px;
-  gap: 8px;
-}
-
-.settings-panel input[type="checkbox"],
-.settings-panel input[type="range"] {
-  accent-color: #0ff;
-  margin-left: 8px;
-}
-
-#speed-slider {
-  width: 120px;
-}
-
-#close-settings, .close-settings {
-  width: 100%;
-  margin-top: 12px;
-  padding: 10px 0;
-  background: #222;
-  color: #0ff;
-  border: 2px solid #0ff;
-  border-radius: 10px;
-  box-shadow: 0 0 12px #0ff;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.21s, box-shadow 0.2s;
-}
-
-/* MOBILE */
-@media (max-width: 700px) {
-  canvas#tetris {
-    width: 92vw;
-    height: calc(92vw * (20 / 12));
-    min-width: 200px;
-    min-height: 320px;
-  }
-  .settings-panel {
-    top: 68px;
-    right: 8px;
-    width: 94vw;
-    padding: 12px;
-  }
-  .settings-btn {
-    top: 10px;
-    right: 8px;
-    font-size: 16px;
-    padding: 8px 10px;
-  }
-  .touch-controls {
-    gap: 8vw;
-  }
-}
-
-@media (max-width: 430px) {
-  .neon-title { font-size: 1.3rem; margin-top: 10px; }
-  .touch-controls button { font-size: 20px; padding: 12px 12px; }
-  .settings-panel { font-size: 13px; padding: 10px; }
+/* responsive */
+@media (max-width:720px){
+  canvas#tetris { width:92vw; height: calc(92vw * (20/12)); min-width:200px; min-height:320px }
+  .hud{ gap: 8px }
+  .touch-controls { gap: 8px }
 }

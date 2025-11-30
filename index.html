@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Neon Tetris</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Neon Tetris — Production</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='2' y='2' width='28' height='28' rx='6' fill='%230ff'/><text x='16' y='22' font-size='14' text-anchor='middle' fill='%23000'>T</text></svg>">
 </head>
@@ -25,9 +25,20 @@
       <input type="checkbox" id="glow-toggle" checked>
     </label>
 
-    <label for="speed-slider">
-      <span>Fall Speed (ms)</span>
-      <input type="range" id="speed-slider" min="200" max="1400" value="1000" step="50">
+    <label for="fps-slider">
+      <span>Render FPS (when perf)</span>
+      <input type="range" id="fps-slider" min="15" max="60" value="30" step="5">
+    </label>
+
+    <label for="gravity-slider">
+      <span>Gravity (cells/sec)</span>
+      <input type="range" id="gravity-slider" min="0.5" max="20" value="1" step="0.5">
+      <div class="small-note" id="gravity-value">1 cps</div>
+    </label>
+
+    <label for="sound-toggle">
+      <span>Sound</span>
+      <input type="checkbox" id="sound-toggle" checked>
     </label>
 
     <button id="close-settings" class="close-settings" aria-label="Close Settings">Close</button>
@@ -38,17 +49,30 @@
       <div id="score-board">
         <div class="score-label">Score</div>
         <div id="score" class="score-value">0</div>
+        <div class="score-sub">Lines <span id="lines">0</span> • Level <span id="level">0</span></div>
       </div>
+
       <div id="next-piece">
         <div class="score-label">Next</div>
         <canvas id="next" width="80" height="80" aria-label="Next piece preview"></canvas>
       </div>
-      <div id="controls-hint" class="controls-hint">
-        <div>Controls: ← → (move) ↑ (rotate) ↓ (soft drop) Space (hard drop) P (pause)</div>
+
+      <div id="hold-piece">
+        <div class="score-label">Hold</div>
+        <canvas id="hold" width="80" height="80" aria-label="Hold piece"></canvas>
       </div>
     </div>
 
     <canvas id="tetris" width="240" height="400" tabindex="0" aria-label="Tetris Game Canvas"></canvas>
+
+    <div class="controls-footer">
+      <div class="controls-hint">Controls: ← → (move) ↑ (rotate) ↓ (soft) Space (hard) C (hold) P (pause)</div>
+      <div class="status-row">
+        <button id="pause-btn" class="small-btn">Pause</button>
+        <button id="restart-btn" class="small-btn">Restart</button>
+        <button id="mute-btn" class="small-btn">Mute</button>
+      </div>
+    </div>
   </div>
 
   <div id="touch-controls" class="touch-controls">
@@ -56,6 +80,8 @@
     <button id="rotate-btn" aria-label="Rotate">⟳</button>
     <button id="right-btn" aria-label="Move Right">▶</button>
     <button id="down-btn" aria-label="Soft Drop">▼</button>
+    <button id="hard-btn" aria-label="Hard Drop">⤓</button>
+    <button id="hold-btn" aria-label="Hold">H</button>
   </div>
 
   <script src="script.js"></script>
